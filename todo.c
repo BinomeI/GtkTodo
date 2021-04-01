@@ -10,7 +10,8 @@ typedef struct {
     GtkWidget *buttonDeletion;//supprinner la todo 
 }todoItem;
 
-GtkWidget *vbox;
+
+GtkWidget *vbox1;
 
 typedef struct {
     GtkWidget *entry;
@@ -38,7 +39,6 @@ static void doneTodo(GtkWidget *button, todoItem *data)
 }
 
     
-
 static void addTodo(GtkWidget* button, EntryArea *data)
 {
     char *buff;
@@ -46,14 +46,13 @@ static void addTodo(GtkWidget* button, EntryArea *data)
     buff = (char*)malloc(size);
     strcpy(buff, gtk_entry_get_text(GTK_ENTRY(data->entry)));
     
-
     printf("%s\n", buff);
     // label to add 
     if(size != 0)
     {
         GtkWidget *hbox;
         hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
-        gtk_container_add(GTK_CONTAINER(vbox), hbox);
+        gtk_container_add(GTK_CONTAINER(vbox1), hbox);
 
         //declaration de la tache a faire 
         todoItem *todo = (todoItem*)malloc(sizeof(todoItem));
@@ -62,7 +61,7 @@ static void addTodo(GtkWidget* button, EntryArea *data)
         const char *format = "<span foreground=\"#dfe6e9\" size=\"x-large\" font_style=\"normal\"><b>%s</b></span>";
         char *markup;
 
-        // pango_parse_markup()
+        
 
         markup = g_markup_printf_escaped (format, buff);
         gtk_label_set_markup (GTK_LABEL (todo->todoLabel), markup);
@@ -82,8 +81,7 @@ static void addTodo(GtkWidget* button, EntryArea *data)
         
         gtk_entry_set_text(GTK_ENTRY(data->entry), "");
     }
-    
-    gtk_widget_show_all(vbox);
+    gtk_widget_show_all(vbox1);
 }
 
 
@@ -95,13 +93,31 @@ static void activate(GtkApplication *App, gpointer user_data)
     gtk_window_set_title(GTK_WINDOW(window), "TODO List");
 
     GtkCssProvider *cssProvider = gtk_css_provider_new();
-    GtkStyleContext *WindowContext, *EntryContext, *HboxContext, *LabelContext;
+    GtkStyleContext *WindowContext, *EntryContext, *HboxContext, *LabelContext, *scrollContext;
 
     EntryArea *entryAdd = (EntryArea*)malloc(sizeof(EntryArea));
 
+    GtkWidget *vbox0;
+    vbox0 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
+    gtk_container_add(GTK_CONTAINER(window), vbox0);
+
+    GtkWidget *vbox;
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
-    gtk_container_add(GTK_CONTAINER(window), vbox);
-    gtk_window_set_default_size(GTK_WINDOW(window), 300, 500);
+    gtk_container_add(GTK_CONTAINER(vbox0), vbox);
+
+    vbox1 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
+    
+    GtkWidget *wind = gtk_scrolled_window_new(NULL, NULL);
+    gtk_widget_set_size_request(wind, 300, 250);
+    gtk_container_add(GTK_CONTAINER(wind), vbox1);
+    gtk_container_add(GTK_CONTAINER(vbox0), wind);
+
+    /*context for wind*/
+    scrollContext = gtk_widget_get_style_context(wind);
+    gtk_style_context_add_class(scrollContext, "M-windsc");
+    /*end*/
+
+    gtk_window_set_default_size(GTK_WINDOW(window), 100, 500);
 
     WindowContext = gtk_widget_get_style_context(vbox);
     gtk_style_context_add_class(WindowContext, "M-window");
@@ -142,6 +158,7 @@ static void activate(GtkApplication *App, gpointer user_data)
     gtk_style_context_add_provider(WindowContext, GTK_STYLE_PROVIDER(cssProvider), GTK_STYLE_PROVIDER_PRIORITY_USER);
     gtk_style_context_add_provider(EntryContext, GTK_STYLE_PROVIDER(cssProvider), GTK_STYLE_PROVIDER_PRIORITY_USER);
     gtk_style_context_add_provider(HboxContext, GTK_STYLE_PROVIDER(cssProvider), GTK_STYLE_PROVIDER_PRIORITY_USER);
+    gtk_style_context_add_provider(scrollContext, GTK_STYLE_PROVIDER(cssProvider), GTK_STYLE_PROVIDER_PRIORITY_USER);
     
     /*End*/
 
