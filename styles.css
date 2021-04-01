@@ -1,0 +1,17 @@
+.M-window{
+    /* background-image: linear-gradient(120deg, #f6d365 0%, #fda085 100%); */
+    background-color: #2d3436;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    min-height: 100px;
+}
+
+.M-entry{
+    color: white;
+}
+
+.M-hbox {
+    margin: auto;
+    padding: 100px;
+}
+
